@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuToggle && mobileDrawer) {
     menuToggle.addEventListener('click', () => {
       mobileDrawer.classList.toggle('open');
+      menuToggle.classList.toggle('active');
       const isOpen = mobileDrawer.classList.contains('open');
       menuToggle.setAttribute('aria-expanded', isOpen);
     });
@@ -73,8 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileLinks.forEach((link) => {
       link.addEventListener('click', () => {
         mobileDrawer.classList.remove('open');
+        menuToggle.classList.remove('active');
         menuToggle.setAttribute('aria-expanded', 'false');
       });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (
+        mobileDrawer.classList.contains('open') &&
+        !mobileDrawer.contains(e.target) &&
+        !menuToggle.contains(e.target)
+      ) {
+        mobileDrawer.classList.remove('open');
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
@@ -214,10 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Also clicking on project media opens lightbox
-  document.querySelectorAll('.project-media-wrap').forEach((wrap) => {
-    wrap.addEventListener('click', () => {
-      const btn = wrap.querySelector('.open-lightbox-btn');
+  // Clicking anywhere on the project card opens lightbox
+  document.querySelectorAll('.project-card').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.open-lightbox-btn')) return;
+      const btn = card.querySelector('.open-lightbox-btn');
       if (btn) btn.click();
     });
   });
